@@ -1,0 +1,150 @@
+<!DOCTYPE HTML>
+<!--
+	Solid State by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>Arduino Mod-Arik Yueh</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<!--[if lte IE 8]><script src="assets/js/ie/html5shiv.js"></script><![endif]-->
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<!--[if lte IE 9]><link rel="stylesheet" href="assets/css/ie9.css" /><![endif]-->
+		<!--[if lte IE 8]><link rel="stylesheet" href="assets/css/ie8.css" /><![endif]-->
+	</head>
+	<body>
+
+		<!-- Page Wrapper -->
+			<div id="page-wrapper">
+
+				<!-- Header -->
+					<header id="header">
+						<h1><a href="index.html">Arik Yueh</a></h1>
+						<nav>
+							<a href="#menu">Menu</a>
+						</nav>
+					</header>
+
+				<!-- Menu -->
+					<nav id="menu">
+						<div class="inner">
+							<h2>Menu</h2>
+							<ul class="links">
+								<li><a href="index.html">Home</a></li>
+								<li><a href="generic.html">Arduino GC Mod</a></li>
+								<li><a href="#materials">Materials</a></li>
+								<li><a href="#overview">The Big Problem</a></li>
+								<li><a href="#Fixes">What the Mod Fixes</a></li>
+								<li><a href="#features">Additional Features</a></li>
+								<li><a href="#github">Github</a></li>
+							</ul>
+							<a href="#" class="close">Close</a>
+						</div>
+					</nav>
+
+				<!-- Wrapper -->
+					<section id="wrapper">
+						<header>
+							<div class="inner">
+								<h2>Arduino GC Controller Mod</h2>
+								<p>Modding the Nintendo Gamecube Controller in C++ and Leveling the playing field</p>
+							</div>
+						</header>
+
+						<!-- Content -->
+							<div class="wrapper">
+							<section id="materials">
+								<div class="inner">
+
+									<h2 class="major">Materials</h2>
+									<span class="image right"><img src="images/Arduino.png" alt="" /></span>
+									<ul>
+									<li>Arduino NANO 3.0(CH340 USB driver)</li>
+									<li>Gamecube Controller</li>
+									<li>Triwing Screwdriver</li>
+									<li>Soldering Iron and Solder</li>
+									<li>Wire</li>
+									</ul>
+									</div>
+							</section>
+							
+							<div class="wrapper">
+									<section id="overview">
+									<div class="inner">
+
+									<h2 class="major">The Big Problem</h2>
+									<p>In the competetive scene for Super Smash Bros. Melee not every controller performs equally. Certain controllers perform better than others and the stock for these controllers is rapidly declining and demand is increasing as the game is becoming more popular. This poses a problem where players need to dish out hundreds of dollars for a controller that will input correctly for them. What this mod tries to do is balance the playing field allowing a standard of controllers that everyone can compete equally on.</p>
+									</div>
+
+
+			<div class="wrapper">
+			<div class="inner">
+				<section id="Fixes">
+				<h2 class="major">What the mod fixes</h2>
+				
+				<h3>Dash Back</h3>
+				<p>For a normal Gamecube controller dash back is highly luck-dependent due to bad design of the game. To input dash back, you have to skip from the X Deadzone to Smash Turn in 1 frame(The game runs in 60 frames per second so 1/60th of a second to input the dash back). This is the biggest oversight the game developers never fixed and introduces a luck factor on every controller called "polling".The problem is that if the game is reading your inputs 60 times a second if at any point the controller reads you in Tilt Turn, your dash back will fail. In order to Smash Turn, you must cross the over a zone called Tilt Turn. This is a major factor when it comes to why some controllers are valued more than others. The controllers that dash back more successfully than others are at the advantage.</p> <span class="image fit"><img src="images/dash-back-failure.png" alt="" /></span>
+				
+				<h4> The Fix</h4>
+				<p>We account for polling by making it so that if you start from the Deadzone, the Tilt Turn inputs are not read until the 2nd frame of actuation. This guarantees that the dash back will succeed every time at the cost of a frame. We also make it so that if A,B,L,R,X,Y, or Z buttons are inputted on the same frame as the Tilt Turn input, it goes through with a Tilt Turn input as normal (The code assumes you are not attempting a dash back when you press any of the buttons).</p>
+				<span class="image fit"><img src="images/dash-back-success.png" alt="" /></span>
+
+
+				<h3>Dash Back Out of Crouch</h3>
+				<p>Similar to the Dash Back problem, Dash Back Out of Crouch also has a "polling" effect. The first condition to input Dash Back Out of Crouch is to reach smash turn in 2 frames within leaving the Deadzone.</p> <span class="image fit"><img src="images/db-ooc-mod-1.png" alt="" /></span> <p>The second condition states that during the process, you must not reach the y axis at -.6125 or more before you reach Smash Turn. Failing the second condition causes your character to simply stand up from crouch.</p><span class="image fit"><img src="images/db-ooc.png" alt="" /></span>
+				<h4> The fix </h4>
+				<p>We keep the second condition intact but add another 1-frame buffer during the Tilt Turn. On top this we also have the controller buttons shut these buffers off similar to the fixes for Dash Back </p><span class="image fit"><img src="images/db-ooc-success.png" alt="" /></span>
+
+				<h3>Shield Drops</h3>
+				<p>Shield dropping is a technique in melee that allows a player to drop off a platform while shielding. This technique is very powerful as it takes a player from a defensive position to an offensive position. However certain controllers have notch values that make shield dropping easier than other controllers. This widens the gap of tiers of controllers. Before this mod, players notched their controllers. Notched meaning someone physically alters the notches on their controller to give them a shield drop notch. Problem was that this job is not only pricey but the long queue times and the limited qualified people to do the job makes it hard for any normal person to get their controller notched</p>
+				<h4> The fix </h4>
+				<p>In the character select screen the player can point at their controller at the south west notch and press 'L'. Then point at the south east notch and press 'R'. The sound effects will notify you that you have "notched" your controller. With this calibration any controller with any type of notches can shield drop effectively.</p>
+
+				</section>
+				</div>
+				</div>
+
+<div class="wrapper">
+			<div class="inner">
+				<section id="features">
+				<h2 class="major">Addtional Features</h2>
+
+				<h3>Perfect Cardinal</h3>
+				<p> Due to manufacturing disparities, many Gamecube controllers struggle to hit the maximum 1.0000 cardinal value. On average most controllers are only able to reach around .9875 within the desired axis. By adding perfect cardinality there is around a 1% increase to analog inputs such as run speeds and aerial drifts.</p>
+				<h3>Mods Off/On</h3>
+				<p> At the character select screen, all of the aforementioned mods can be toggled off/on by holding D-Pad Down for 1 second. An audio cue will confirm. This will also reset shield drop notches.</p>
+			
+				</section>
+				</div>
+				</div>
+  
+
+  <div class="wrapper">
+	<div class="inner">
+	<ul class="contact">
+		<section id="github">
+			<h3 class="major">Github</h3>
+  				<li class="fa-github"><a href="https://github.com/arikyueh" target="_blank">https://github.com/arikyueh/BattleBoats</a></li>
+  		</section>
+  		</ul>
+  	</div>
+  </div>
+
+
+
+
+				<!-- Footer -->
+					
+
+		<!-- Scripts -->
+			<script src="assets/js/skel.min.js"></script>
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/jquery.scrollex.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<!--[if lte IE 8]><script src="assets/js/ie/respond.min.js"></script><![endif]-->
+			<script src="assets/js/main.js"></script>
+
+	</body>
+</html>
