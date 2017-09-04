@@ -150,7 +150,7 @@
 				<section id="concept">
 				<h3 class="major">Concepts Used</h3>
 				<h5>Encrypted String and Checksums</h5>
-				<p>The way these string are encrypted are done so by checksums. The simplest way I did this is by XORing every bit after '$' and before '*' in the string creating 2 ascii hexadecimal characters. The reason I need to encrypt the strings it is so that the information is kept between only the user and the bot. As the hasing operation is XORing both parties know to decode the string.</p>
+				<p>The way these string are encrypted are done so by checksums. The simplest way I did this is by XORing every bit after '$' and before '*' in the string creating 2 ascii hexadecimal characters. The reason I need to encrypt the strings is to keep information between only the user and the bot. As the hasing operation is XORing both parties know to decode the string.</p>
 
 				<h5>State Machines</h5>
 				<p>The entire game is handled with two state machines. One named protocol.c that handles parsing and recording information of the recieved encrypted message. The other state machine, ArtificialAgent.c, handles the states of the entire game such as guessing coordinates or determining who goes first. The diagrams below describe the states and their conditions in bold.</p>
