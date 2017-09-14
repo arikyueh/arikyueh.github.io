@@ -76,7 +76,7 @@
 									<div class="inner">
 
 									<h3 class="major">Overview</h3>
-									<p><span class="image right"><img src="images/battleboats1.gif" alt="" /></span>The game begins with both the user and bot sending a negotiation message set with random values. Both side's message values are compared to determine who goes first. Whether its the bot or the user, they send a guess coordinate string that details coordinates for guesses and the other side decides whether they send hit strings and or send guess strings if they miss. The cycle of sending guesses and hits continues until one side has sunken every ship. I also when the game finishes the side who won has their leds flashing </p>
+									<p><span class="image right"><img src="images/battleboats1.gif" alt="" /></span>The game begins with both the user and bot sending a negotiation message set with random values. Both side's message values are compared to determine who goes first. Whether its the bot or the user, they send a guess coordinate string that details coordinates for guesses and the other side decides whether they send hit strings and or send guess strings if they miss. The cycle of sending guesses and hits continues until one side has sunken every ship. When the game finishes, the side who wins has their LEDs flashing. </p>
 									</div>
 									<div class="inner">
 									<section class="features">
@@ -150,10 +150,10 @@
 				<section id="concept">
 				<h3 class="major">Concepts Used</h3>
 				<h5>Encrypted String and Checksums</h5>
-				<p>The way these string are encrypted are done so by checksums. The simplest way I did this is by XORing every bit after '$' and before '*' in the string creating 2 ascii hexadecimal characters. The reason I need to encrypt the strings is to keep information between only the user and the bot. As the hasing operation is XORing both parties know to decode the string.</p>
+				<p>The way these strings are encrypted are done so by checksums. The simplest way I did this is by XORing every bit after '$' and before '*' in the string, creating 2 ascii hexadecimal characters. The reason I need to encrypt the strings is to keep information between only the user and the bot. As the hashing operation is XORing both parties know to decode the string.</p>
 
 				<h5>State Machines</h5>
-				<p>The entire game is handled with two state machines. One named protocol.c that handles parsing and recording information of the recieved encrypted message. The other state machine, ArtificialAgent.c, handles the states of the entire game such as guessing coordinates or determining who goes first. The diagrams below describe the states and their conditions in bold.</p>
+				<p>The entire game is handled with two state machines. One named protocol.c that handles parsing and recording information of the received encrypted message. The other state machine, ArtificialAgent.c, handles the states of the entire game such as guessing coordinates or determining who goes first. The diagrams below describe the states and their conditions labeled in bold.</p>
 
 				<div class="box alt">
 					<div class="row uniform">
