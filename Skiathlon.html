@@ -33,7 +33,7 @@
 							<h2>Menu</h2>
 							<ul class="links">
 								<li><a href="index.html">Home</a></li>
-								<li><a href="BattleBoats.html">BattleBoats</a></li>
+								<li><a href="Skiathlon.html">Skiathlon</a></li>
 								<li><a href="#materials">Materials</a></li>
 								<li><a href="#overview">Overview</a></li>
 								<li><a href="#concept">Concepts Used</a></li>
@@ -47,8 +47,8 @@
 					<section id="wrapper">
 						<header>
 							<div class="inner">
-								<h2>BattleBoats</h2>
-								<p>Coding in C the licensed boardgame Battleship with two uno32 kits</p>
+								<h2>Skiathlon</h2>
+								<p>Coding in verilog an old school Skiathlon game with the Basys3 board</p>
 							</div>
 						</header>
 
@@ -58,21 +58,18 @@
 								<div class="inner">
 
 									<h3 class="major">Materials</h3>
-									<span class="image right"><img src="images/pic01.png" alt="" /></span>
+									<span class="image right"><img src="images/basys3.png" alt="" /></span>
 									<ul>
-									<li>2x chipKIT Uno32: Basic Microcontroller Board</li>
-									<li>2x chipKIT Basic I/O Shield</li>
-									<li>3x male/male jumper wire.</li>
-									<li>A C compiler</li>
-									<li>A serial communication program</li>
+									<li>1x Basys 3 Artix-7 FPGA</li>
+									<li>1x VGA cable</li>
+									
+									<li>A verilog compiler</li>
+									<li>A computer monitor</li>
 									</ul>
 									</div>
 							</section>
 
-
-
-							
-							<div class="wrapper">
+<div class="wrapper">
 									<section id="overview">
 									<div class="inner">
 
@@ -94,74 +91,12 @@
 
 				<section id="concept">
 				<h3 class="major">Concepts Used</h3>
-				<h5>Encrypted String and Checksums</h5>
-				<p>The way these strings are encrypted are done so by checksums. The simplest way I did this is by XORing every bit after '$' and before '*' in the string, creating 2 ascii hexadecimal characters. The reason I need to encrypt the strings is to keep information between only the user and the bot. As the hashing operation is XORing both parties know to decode the string.</p>
-
-				<div class="inner">
-									<section class="features">
-										<div class="table-wrapper">
-											<table class="alt">
-												<tbody>
-													<tr>
-												<h4> 
-												Examples of Encrypted Strings</h4>
-														<td>Negotiation set 1</td>
-														<td>
-														<ul>
-														<li>$CHA,37348,117*46</li>
-														<li>$DET,9578,46222*66</li>
-														</ul>
-														</td>
-													</tr>
-
-													<tr>
-														<td>Negotiation set 2</td>
-														<td>
-														<ul>
-														<li>$CHA,54104,139*45</li>
-														<li>$DET,32990,21382*5e</li>
-														</ul>
-														</td>
-													</tr>
-
-													<tr>
-														<td>Negotiation set 3</td>
-														<td>
-														<ul>
-														<li>$CHA,62132,70*79</li>
-														<li>$DET,52343,16067*50</li> 
-														</ul>
-														</td>
-													</tr>
-													<tr>
-														<td>Hit string</td>
-														<td>
-														string template="$HIT,row,column,hit or miss(# for ship size)*checksum"
-															<ul>
-															<li>$HIT,3,8,1*43</li>
-															<li>$HIT,0,2,0*4b</li>
-															<li>$HIT,5,6,4*4e</li>
-															</ul>
-														</td>
-													</tr>
-													<tr>
-														<td>Coordinate string</td>
-														<td>
-														string template="$COO,[row],[column],*checksum
-														<ul>
-														<li>$COO,0,2*41</li>
-														<li>$COO,5,5*43</li>
-														<li>$COO,1,7*45</li>
-														</ul>
-														</td>
-													</tr>
-													</tbody>
-													</table>
-
+				<h5>Creating a Frame</h5>
+				<p><span class="image right"><img src="images/frame.jpg" alt=""/></span>Following the diagram we have a Hsync and a Vsync variable that are run by counters that reset at 525 and 800, these values act as the location inside the frame. There is an active region which will be a simple logic variable that is true when Hsync and Vsync are between 0 and 480, and 0 to 640. Outisde the region is when RGB outputs should be set to 0. Testing the code would show subtle gray tint throughout the screen on the monitor.</p>
 
 				<h5>State Machines</h5>
 				<p>The entire game is handled with two state machines. One named protocol.c that handles parsing and recording information of the received encrypted message. The other state machine, ArtificialAgent.c, handles the states of the entire game such as guessing coordinates or determining who goes first. The diagrams below describe the states and their conditions labeled in bold.</p>
-	
+
 				<div class="box alt">
 					<div class="row uniform">
 					
