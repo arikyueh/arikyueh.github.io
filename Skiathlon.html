@@ -6,7 +6,7 @@
 -->
 <html>
 	<head>
-		<title>BattleBoats-Arik Yueh</title>
+		<title>Skiathlon-Arik Yueh</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<!--[if lte IE 8]><script src="assets/js/ie/html5shiv.js"></script><![endif]-->
@@ -15,7 +15,10 @@
 		<!--[if lte IE 8]><link rel="stylesheet" href="assets/css/ie8.css" /><![endif]-->
 	</head>
 	<body>
-
+		<div class="modal-img-container">
+			<span id="frame-close-button" class="close">x</span>
+			<img class="frame-clickable minimized-frame" src="images/frame.jpg" alt=""/>
+		</div>
 		<!-- Page Wrapper -->
 			<div id="page-wrapper">
 
@@ -74,7 +77,9 @@
 									<div class="inner">
 
 									<h3 class="major">Overview</h3>
-									<p><span class="image right"><img src="images/battleboats1.gif" alt="" /></span>The game begins with both the user and bot sending a negotiation message set with random values. Both side's message values are compared to determine who goes first. Whether its the bot or the user, they send a guess coordinate string that details coordinates for guesses and the other side decides whether they send hit strings and or send guess strings if they miss. The cycle of sending guesses and hits continues until one side has sunken every ship. When the game finishes, the side who wins has their LEDs flashing. 
+									<p><span class="image right"><img src="images/battleboats1.gif" alt="" /></span>
+
+									The game waits for a user input to start the skiathlon and flashes the skier 3 times as a countdown to start. There are randomized red gates that approach the skier at a set speed and the user must maneuver the skier with the left and right buttons to not hit the red bars. As the game progresses the skier will get close to the bottom of the screen and near there the skier will start flashing which indicates a point awarded to the user. The user can lose a point if at any time they hit the red gates and the game finishes with flashing blue borders and this happens when the points match the bit value of the user's switches 4-6. The game will reset the points to 0 and resets the skier to the top in every round and waits for user input to start again.
 									</p>
 									</div>
 									<br>
@@ -92,10 +97,14 @@
 				<section id="concept">
 				<h3 class="major">Concepts Used</h3>
 				<h5>Creating a Frame</h5>
-				<p><span class="image right"><img src="images/frame.jpg" alt=""/></span>Following the diagram we have a Hsync and a Vsync variable that are run by counters that reset at 525 and 800, these values act as the location inside the frame. There is an active region which will be a simple logic variable that is true when Hsync and Vsync are between 0 and 480, and 0 to 640. Outisde the region is when RGB outputs should be set to 0. Testing the code would show subtle gray tint throughout the screen on the monitor.</p>
+				<span class="image right"><a href="#" onclick="return false;"><img class="frame-clickable"<img id="frame" src="images/frame.jpg" alt=""/> </span></a><p>				
+				Following the diagram we have a Hsync and a Vsync variable that are run by counters that reset at 525 and 800, these values act as the location and coordinate system inside the frame. There is an active region which will be a simple logic variable that is true when Hsync and Vsync are between 0 and 480, and 0 to 640. Outisde the region is when RGB outputs should be set to 0. Testing the code would show subtle gray tint throughout the screen on the monitor. There is a frame counter that is set up from the Vsync value when it resets.</p>
+
+				<h5>RGB colors</h5>
+				<p>The skier is a 16 by 16 green square with it's top left corner placed at the coordinates 312, 24. A VGA green signal is defined to color and the skier falls at a set speed of 1 pixel every 8 frames. The VGA blue signal is used as a 8 pixel thick border which surrond the screen. At any time the skier hits the border it automatically switches the skier's direction. The VGA red signal represents the red gates that will be randomized and come up with gaps. The details on the randomizer will be detailed in the state machines section</p>
 
 				<h5>State Machines</h5>
-				<p>The entire game is handled with two state machines. One named protocol.c that handles parsing and recording information of the received encrypted message. The other state machine, ArtificialAgent.c, handles the states of the entire game such as guessing coordinates or determining who goes first. The diagrams below describe the states and their conditions labeled in bold.</p>
+				<p>The game is handled with two distinct state machines. The first one is only used once in the game which is the StateMachine.v. This state machine handles the states of the game, when the skier starts skiing and when to award points or finish games is all done through StateMachine.v. The other state machine is called GateMachine.v and we call it 8 times as they all ask their own gate with their own starting position. This state machine handles the reloading of the gate when it reaches the top and randomizes the gap and sets it back to the bottom. All the gates also move up at the same rate of 1 pixel every 12 frames.</p>
 
 				<div class="box alt">
 					<div class="row uniform">
@@ -133,6 +142,8 @@
 
 					</div>
 				</div>
+				<h5>Randomizer</h5>
+				<p>The gates are fed with randomized intervals of gaps from left to right and each choice must not be too far away from the gap position ahead of the gate. To do this a mux is needed to select the intervals of 1 to 2 intervals to the left or 1 to 2 to the right or lastly no interval. The mux is driven by a randomizer module called LFSR.v and the random bit string is taken at the exact time the gate reloads. From the mux it has 8 options at random so it is filled with the 5 choices of intervals with a repeats to fill the 8 options.</p>
 	</section>
 	</div>
 
@@ -144,7 +155,7 @@
 	<ul class="contact">
 		<section id="github">
 			<h3 class="major">Github</h3>
-  				<li class="fa-github"><a href="https://github.com/arikyueh/BattleBoats" target="_blank">https://github.com/arikyueh/BattleBoats</a></li>
+  				<li class="fa-github"><a href="https://github.com/arikyueh/Skiathlon" target="_blank">https://github.com/arikyueh/Skiathlon</a></li>
   		</section>
   		</ul>
   	</div>
@@ -157,12 +168,13 @@
 					
 
 		<!-- Scripts -->
+			<script src="assets/js/shared.js"></script>
 			<script src="assets/js/skel.min.js"></script>
 			<script src="assets/js/jquery.min.js"></script>
 			<script src="assets/js/jquery.scrollex.min.js"></script>
 			<script src="assets/js/util.js"></script>
 			<!--[if lte IE 8]><script src="assets/js/ie/respond.min.js"></script><![endif]-->
 			<script src="assets/js/main.js"></script>
-
+			  <script src="assets/js/skiathlon.js"></script>
 	</body>
 </html>

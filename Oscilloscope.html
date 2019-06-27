@@ -1,0 +1,173 @@
+<!DOCTYPE HTML>
+<!--
+	Solid State by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>Oscilloscope-Arik Yueh</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<!--[if lte IE 8]><script src="assets/js/ie/html5shiv.js"></script><![endif]-->
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<!--[if lte IE 9]><link rel="stylesheet" href="assets/css/ie9.css" /><![endif]-->
+		<!--[if lte IE 8]><link rel="stylesheet" href="assets/css/ie8.css" /><![endif]-->
+	</head>
+	<body>
+		<div class="modal-img-container">
+			<span id="frame-close-button" class="close">x</span>
+			<img class="frame-clickable minimized-frame" src="images/wiring_oscilloscope.png" alt=""/>
+		</div>
+
+		<div class="modal-img-container">
+			<span id="frame-close-button" class="close">x</span>
+			<img class="frame-clickable minimized-frame" src="images/psoc_design.png" alt=""/>
+		</div>
+		<!-- Page Wrapper -->
+			<div id="page-wrapper">
+
+				<!-- Header -->
+					<header id="header">
+						<h1><a href="index.html">Arik Yueh</a></h1>
+						<nav>
+							<a href="#menu">Menu</a>
+						</nav>
+					</header>
+
+				<!-- Menu -->
+					<nav id="menu">
+						<div class="inner">
+							<h2>Menu</h2>
+							<ul class="links">
+								<li><a href="index.html">Home</a></li>
+								<li><a href="Skiathlon.html">Oscilloscope</a></li>
+								<li><a href="#materials">Materials</a></li>
+								<li><a href="#overview">Overview</a></li>
+								<li><a href="#concept">Concepts Used</a></li>
+								<li><a href="#github">Github</a></li>
+							</ul>
+							<a href="#" class="close">Close</a>
+						</div>
+					</nav>
+
+				<!-- Wrapper -->
+					<section id="wrapper">
+						<header>
+							<div class="inner">
+								<h2>Dual-Channel Oscilloscope</h2>
+								<p>Built a Dual-Channel Oscilloscope with a PSoC-5 and a Raspberry Pi 3 B+</p>
+							</div>
+						</header>
+
+						<!-- Content -->
+							<div class="wrapper">
+							<section id="materials">
+								<div class="inner">
+
+									<h3 class="major">Materials</h3>
+									<span class="image right"><img src="images/pi.png" alt="" /></span>
+									<ul>
+									<li>1x PSoC-5 </li>
+									<li>1x Raspberry Pi 3 B+</li>
+									<li>1x MicroUSB cable</li>
+									<li>1x Male to Female USB cable</li>
+									<li>1x Breadboard </li>
+									<li>10x Male to Male Jumper wires</li>
+									<li>2x Potentiometer</li>
+									<li>1x Monitor</li>
+									<li>1x Waveform Generator</li>
+									</ul>
+									</div>
+							</section>
+
+<div class="wrapper">
+									<section id="overview">
+									<div class="inner">
+
+									<h3 class="major">Overview</h3>
+
+									The program takes an analog input with the user's command line arguments for the desired settings on the oscilloscope. Various settings are avalaible such as the sample rate, trigger modes, and the x,y scale for displaying the waveform. The PSoC handles converting the signal to digital and sends the data over to the Pi through USB protocols. There are ping pong buffers in the PSoC to ensure no bytes are lost when converting and sending. The Pi then takes the digital values and converts them into coordinates to be displayed through OpenVG. The Pi also handles the command line arguments to execute the specific task needed to set the user's parameters. The program also handles two waveforms so there are two endpoints specified for the USB transfer. I2C link is used to change the sample rate by clock dividing the DMA thats in charge of converting the analog samples to digital. The link is also used to sample the two potentiometers that control the heights of the two waveforms. 
+									</p>
+									</div>
+
+
+
+
+			<div class="wrapper">
+			<div class="inner">
+
+				<section id="concept">
+				<h3 class="major">PSoC Functionality</h3>
+				<h5>Converting and Transfering</h5>
+				<span class="image right"><a href="#" onclick="return false;"><img class="frame-clickable"<img id="frame" src="images/psoc_design.png" alt=""/> </span></a><p>				
+				The PSoC handles converting the analog voltage signal into a digital with the ADC and a DMA controller sends those bytes to ping pong buffers. The buffers are each 64 bytes and take turns being filled up by the DMA. Once one of the two buffers are filled the DMA signals an interrupt that signals the USBFS to send over the 64 bytes to the Raspberry Pi side. When one buffer is filled the DMA switches to the other buffer and will swap between the two filling and sending thus ping ponging to ensure no data is lost. There are two SAR ADC's which both boast incredibly fast sampling rates of roughly 1M samples per second and as such the DMA clock is what controls the sampling rate. There is another ADC conversion for the two potentiometer values that will handle moving the waveforms up and down. On the right is the entire top design of the PSoC which has the USBFS component, I2C configured as a slave, ping pong buffers with respective DMA controllers, and the multiple of ADC's </p>
+
+				<h5>Hardware Design</h5>
+				<span class="image right"><a href="#" onclick="return false;"><img class="frame-clickable"<img id="frame" src="images/wiring_oscilloscope.png" alt=""/> </span></a><p>
+				<p>The key decisions made were to have the PSoC only handle transferring the ADC values from the analog signal with USBFS protocols and send over potentiometer values over through the I2C link. So as such the Pi and PSoC are connected with a micro USB cable and wiring with both the SDA and SCL pinouts. The Raspberry Pi powers the PSoC with a 3.3V pin. This means that the PSoC can only handle amplitudes of the analog signal less than 3.3V. Both the I2C link and the USB transfer are configured for the PSoC as the slave and the Pi as the master.</p>
+
+				<h5>I2C Link</h5>
+				<p>Because the oscilloscope needs to be able to change the sample rate, an I2C link is required to send commands from the Raspberry Pi side to clock divide the DMA controller and have the PSoC send over potentiometer values every 100ms. The I2C can handle a two way connection simulatensouly and helps enable the USB link to focus only on transfering the data bytes of the signal. When a user wants a certain frequency such as 10kHz the program will send the respective integer 10 that will clock divide from 100KHz clock driving the DMA controller to the desired 10KHz. And potentiometer values are sent over the link every 100ms to change the height of the waveforms on the Pi side.</p>
+
+
+				<h3 class="major">Raspberry Pi Functionality</h3>
+				<h5>High Level Program Flow</h5>
+								
+				<p>The entire program starts when the user runs the program with their desired parameters (the specfic parameters will be discussed in the next section). The Pi starts by filling up the calculated sample size buffer from the USB, each time grabbing 64 bytes and continues to do so until the sample size is reached. Once that sample size is reached the program checks if a trigger mode is set, if so the program processes the trigger to see if the waveform satisfies the condition. The program then shifts to displaying the waveform where it takes the sample size buffer and converts each point into coordinates ready to be displayed through OpenVG. While displaying the program repeats itself taking another set sample size buffer and once the buffer is filled the waveform will refresh itself on the display. Once the waveforms are displayed the user can move the potentiometers to adjust the waveforms' heights </p>
+
+				<h5>Argument Parameters</h5>
+								
+				<p>The oscilloscope system can take a user’s input of trigger mode, trigger level, trigger slope, sample rate, trigger channel, x scale, and y scale (using characters m, t, s, r, c, x, y respectively). For trigger mode choose between free mode or trigger mode where free mode will simply output the plot waveform without any conditions and trigger mode will take the set trigger level, slope, and channel and compare the level to the signal to see if it satisfies the conditions based on the set slope. The slopes you can choose from are either positive or negative. Sample rate changes how many samples the program will get per second. Trigger channel sets which signal channel to use to check the trigger conditions. X and y scale set how many microseconds and mV per division when displaying the oscilloscope. There are set values predefined and if the user does not know if an input is valid the program will print out all the valid inputs for that specific character.</p>
+
+				<h5>Trigger Mode</h5>
+								
+				<p>When the user sets the mode to trigger the program takes user's user’s trigger level, channel, and slope to determine when to start the plot of the waveform. The conditions to satisfy the trigger for positive slope is shown below:</p>
+				<ol>
+  					<li>The previous sample less than the trigger level</li>
+  					<li>The current sample is greater than or equal to the trigger level</li>
+  					<li>The current slope is positive</li>
+				</ol>
+				<p>The conditions to satisfy the trigger for negative slope is shown below:</p>
+				<ol>
+  					<li>The previous sample greater than the trigger level</li>
+  					<li>The current sample is less than or equal to the trigger level</li>
+  					<li>The current slope is negative</li>
+				</ol>
+				<p> The program will iterate through the sample size array until it reaches the trigger conditions and returns the index at which the exact conditions were met to start plotting. If the trigger conditions are never met the program grabs another set of the sample size to try again and see if the conditions will be met. </p>
+
+
+	</section>
+	</div>
+
+
+  
+
+  <div class="wrapper">
+	<div class="inner">
+	<ul class="contact">
+		<section id="github">
+			<h3 class="major">Github</h3>
+  				<li class="fa-github"><a href="https://github.com/arikyueh/Dual-Channel-Oscilloscope" target="_blank">https://github.com/arikyueh/Dual-Channel-Oscilloscope</a></li>
+  		</section>
+  		</ul>
+  	</div>
+  </div>
+
+
+
+
+				<!-- Footer -->
+					
+
+		<!-- Scripts -->
+			<script src="assets/js/shared.js"></script>
+			<script src="assets/js/skel.min.js"></script>
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/jquery.scrollex.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<!--[if lte IE 8]><script src="assets/js/ie/respond.min.js"></script><![endif]-->
+			<script src="assets/js/main.js"></script>
+			  <script src="assets/js/oscilloscope.js"></script>
+	</body>
+</html>
